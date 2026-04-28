@@ -37,14 +37,14 @@ void setup() {
    return;
  }
  Serial.println("card initialized.");
-
+/*
   mlx.begin();    // Initialize IR temperature sensor 
 
 
   sht4.begin();
   sht4.setPrecision(SHT4X_HIGH_PRECISION); //options: HIGH MED LOW
   sht4.setHeater(SHT4X_NO_HEATER); //options: NO_HEATER HIGH_HEATER_1S HIGH_HEATER_100MS HEATER_1S HEATER_100MS HEATER_1S HEATER_100MS 
-
+*/
   ms8607.begin();
   ms8607.setHumidityResolution(MS8607_HUMIDITY_RESOLUTION_OSR_8b); // options: 8b 10b 11b 12b
   ms8607.setPressureResolution(MS8607_PRESSURE_RESOLUTION_OSR_8192); // options: 256 512 1024 2048 4096 8192
@@ -65,7 +65,8 @@ void setup() {
       dataFile.close();
       Serial.println(dataString);
     }
-  for (int i = 0; i<=3; i++) {
+
+  for (int i = 0; i < 4; i++) {
    digitalWrite(LED_BUILTIN, HIGH);
    delay(300);
    digitalWrite(LED_BUILTIN, LOW);
@@ -76,7 +77,9 @@ void setup() {
 
 void loop() {
 
-    char gpsChar = GPS.read(); // read a character from the GPS in the 'main loop' and trust that it is being sent to a behind-the-scenes buffer that we don't need to worry about.
+    char gpsChar = GPS.read(); // pull next byte from the serial buffer into the GPS library; call each loop so complete sentences are assembled and newNMEAreceived() can fire
+
+
   if (GPS.newNMEAreceived()) // if this character completes a sentence...
   { 
     if (!GPS.parse(GPS.lastNMEA())) // ...check the checksum, set the newNMEAreceived() flag to false, and parse the sentence.
@@ -132,14 +135,14 @@ void loop() {
     dataString += mlx.readObjectTempC();
     dataString += ",";
 
-    sensors_event_t pressure, temp, humidity; // create variables to hold data
-    sht4.getEvent(&humidity, &temp); // populate temp and humidity variables with fresh data
+    sensors_event_t temp, humidity; // create variables to hold data
+    sht4.getEvent(&temp, &humidity); // populate temp and humidity variables with fresh data
     dataString += temp.temperature; // add temperature to dataString
     dataString += ",";          
     dataString += humidity.relative_humidity; // add humidity to dataString
     dataString += ",";         
     
-//    sensors_event_t pressure, temp, humidity;
+    sensors_event_t pressure;
     ms8607.getEvent(&pressure, &temp, &humidity);
     dataString += pressure.pressure; 
     dataString += ",";
