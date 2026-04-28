@@ -163,7 +163,7 @@ void loop() {
      dataFile.println(dataString);
      dataFile.close();
      Serial.println(dataString);
-  } else {				 	              // if the datafile isn’t available (e.g. loose SD card)
+  } else {				 	              // if the datafile isn't available (e.g. loose SD card)
    Serial.print("write failed "); // indicate this on the serial monitor
    Serial.println(dataString);	  // display the data
    SD.begin(chipSelect);		      // attempt to reconnect the SD card, in case it has reseated
